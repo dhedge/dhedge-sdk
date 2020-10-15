@@ -3,184 +3,160 @@ const Pool = require('./pool')
 
 const FACTORY_ABI = require('./abi/factory')
 
-
 class Factory {
+    constructor(signer, factoryAddress) {
+        this.signer = signer
 
-	constructor(signer, factoryAddress) {
+        this.factory = new Contract(factoryAddress, FACTORY_ABI, signer)
 
-		this.signer = signer;
+        this.address = factoryAddress
+    }
 
-		this.factory = new Contract(factoryAddress, FACTORY_ABI, signer)
+    static initialize() {
+        const config = require('./config')
 
-		this.address = factoryAddress
+        const provider = new ethers.providers.JsonRpcProvider(config.provider)
 
-	}
+        const signer = Wallet.fromMnemonic(
+            config.mnemonic,
+            "m/44'/60'/0'/0/" + config.accountId
+        ).connect(provider)
 
-	static initialize() {
+        return new Factory(signer, config.factoryAddress)
+    }
 
-		const config = require('./config')
+    // Read
 
-		const provider = new ethers.providers.JsonRpcProvider(config.provider)
-	
-		const signer = Wallet.fromMnemonic(config.mnemonic, "m/44'/60'/0'/0/" + config.accountId).connect(provider)
+    getAddress() {
+        return this.address
+    }
 
-		return new Factory(signer, config.factoryAddress)
+    async loadPool(address) {
+        await this.validatePool(address)
 
-	}
+        let pool = new Pool(this.signer, address)
 
-	// Read
+        return pool
+    }
 
-	getAddress() {
+    async isPool(address) {
+        return this.factory.isPool(address)
+    }
 
-		return this.address
+    async validatePool(address) {
+        let isPool = await this.isPool(address)
 
-	}
+        if (!isPool) throw new Error('Given address not a pool')
+    }
 
-	async loadPool(address) {
+    async getPoolCount(raw = false) {
+        let result = await this.factory.deployedFundsLength()
 
-		await this.validatePool(address)
+        if (raw) return result
 
-		let pool = new Pool(this.signer, address)
+        return result.toNumber()
+    }
 
-		return pool
+    async getDaoAddress() {
+        return this.factory.getDaoAddress()
+    }
 
-	}
+    async getManagerFee(address, raw = false) {
+        await this.validatePool(address)
 
-	async isPool(address) {
+        let result = await this.factory.getPoolManagerFee(address)
 
-		return this.factory.isPool(address)
+        if (raw) return result
 
-	}
+        result = result.map(item => item.toNumber())
+        result = result[0] / result[1]
 
-	async validatePool(address) {
+        return result
+    }
 
-		let isPool = await this.isPool(address)
+    async getMaximumManagerFee(raw = false) {
+        let result = await this.factory.getMaximumManagerFee()
 
-		if (!isPool)
-			throw new Error('Given address not a pool')
+        if (raw) return result
 
-	}
+        result = result.map(item => item.toNumber())
+        result = result[0] / result[1]
 
-	async getPoolCount(raw = false) {
+        return result
+    }
 
-		let result = await this.factory.deployedFundsLength()
+    async getExitFee(raw = false) {
+        let result = await this.factory.getExitFee()
 
-		if (raw)
-			return result
+        if (raw) return result
 
-		return result.toNumber()
+        result = result.map(item => item.toNumber())
+        result = result[0] / result[1]
 
-	}
+        return result
+    }
 
-	async getDaoAddress() {
+    async getDaoFee(raw = false) {
+        let result = await this.factory.getDaoFee()
 
-		return this.factory.getDaoAddress()
-	}
+        if (raw) return result
 
-	async getManagerFee(address, raw = false) {
+        result = result.map(item => item.toNumber())
+        result = result[0] / result[1]
 
-		await this.validatePool(address)
+        return result
+    }
 
-		let result = await this.factory.getPoolManagerFee(address)
+    async getExitFeeCooldown(raw = false) {
+        let result = await this.factory.getExitFeeCooldown()
 
-		if (raw)
-			return result
+        if (raw) return result
 
-		result = result.map(item => item.toNumber())
-		result = result[0] / result[1]
+        return result.toNumber()
+    }
 
-		return result
+    async getMaximumAssetCount(raw = false) {
+        let result = await this.factory.getMaximumSupportedAssetCount()
 
-	}
+        if (raw) return result
 
-	async getMaximumManagerFee(raw = false) {
+        return result.toNumber()
+    }
 
-		let result = await this.factory.getMaximumManagerFee()
+    // Write
 
-		if (raw)
-			return result
+    async createPool(
+        privatePool,
+        managerName,
+        poolName,
+        assets = ['sETH'],
+        managerFeeNumerator = 100
+    ) {
+        assets = assets.map(asset => {
+            return ethers.utils.formatBytes32String(asset)
+        })
 
-		result = result.map(item => item.toNumber())
-		result = result[0] / result[1]
+        let pool = await this.factory.createFund(
+            privatePool,
+            this.signer.getAddress(),
+            managerName,
+            poolName,
+            managerFeeNumerator,
+            assets
+        )
 
-		return result
+        let receipt = await pool.wait(1)
 
-	}
+        let creationEvent = receipt.events.find(
+            item => item.event === 'FundCreated'
+        )
 
-	async getExitFee(raw = false) {
+        if (!creationEvent) throw new Error('Fund not created')
 
-		let result = await this.factory.getExitFee()
+        let poolAddress = creationEvent.args.fundAddress
 
-		if (raw)
-			return result
-
-		result = result.map(item => item.toNumber())
-		result = result[0] / result[1]
-
-		return result
-
-	}
-
-	async getDaoFee(raw = false) {
-
-		let result = await this.factory.getDaoFee()
-
-		if (raw)
-			return result
-
-		result = result.map(item => item.toNumber())
-		result = result[0] / result[1]
-
-		return result
-
-	}
-
-	async getExitFeeCooldown(raw = false) {
-
-		let result = await this.factory.getExitFeeCooldown()
-
-		if (raw)
-			return result
-
-		return result.toNumber()
-
-	}
-
-	async getMaximumAssetCount(raw = false) {
-
-		let result = await this.factory.getMaximumSupportedAssetCount()
-
-		if (raw)
-			return result
-
-		return result.toNumber()
-
-	}
-
-	// Write
-
-	async createPool(privatePool, managerName, poolName, assets = ['sETH'], managerFeeNumerator = 100) {
-
-		assets = assets.map(asset => {
-			return ethers.utils.formatBytes32String(asset)
-		})
-
-		let pool = await this.factory.createFund(privatePool, this.signer.getAddress(), managerName, poolName, managerFeeNumerator, assets)
-
-		let receipt = await pool.wait(1)
-
-		let creationEvent = receipt.events.find(item => item.event === 'FundCreated')
-
-		if (!creationEvent)
-			throw new Error('Fund not created')
-
-		let poolAddress = creationEvent.args.fundAddress
-
-		return new Pool(this.signer, poolAddress)
-
-	}
-
+        return new Pool(this.signer, poolAddress)
+    }
 }
-
 
 module.exports = Factory

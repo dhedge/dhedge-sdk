@@ -1,11 +1,11 @@
 const { Factory } = require('../index')
 
-
 ;(async () => {
-
     const factory = Factory.initialize()
-    
-    let pool = await factory.createPool(false, 'Manager Name', 'Pool Name', ['sETH'])
+
+    let pool = await factory.createPool(false, 'Manager Name', 'Pool Name', [
+        'sETH',
+    ])
 
     console.log('Summary', await pool.getSummary())
 
@@ -16,9 +16,8 @@ const { Factory } = require('../index')
     await pool.deposit('100000000000000000000')
 
     console.log('Composition', await pool.getComposition())
-    
+
     await pool.exchange('sUSD', '50000000000000000000', 'sETH')
 
     console.log('Composition', await pool.getComposition())
-    
 })()
