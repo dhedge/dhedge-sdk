@@ -2,6 +2,8 @@ const { Contract, Wallet, ethers } = require('ethers')
 const Pool = require('./pool')
 
 const FACTORY_ABI = require('./abi/factory')
+const ADDRESS_RESOLVER_ABI = require('./abi/address-resolver')
+const ExchangeRates = require('./exchange-rates')
 
 class Factory {
     constructor(signer, factoryAddress) {
@@ -23,6 +25,26 @@ class Factory {
         ).connect(provider)
 
         return new Factory(signer, config.factoryAddress)
+    }
+
+    getAddressResolver() {
+        return this.factory.addressResolver()
+    }
+
+    async getExchangeRates() {
+        const resolverAddress = await this.getAddressResolver()
+
+        const resolver = new Contract(
+            resolverAddress,
+            ADDRESS_RESOLVER_ABI,
+            this.signer
+        )
+
+        const exchangeRatesAddress = await resolver.getAddress(
+            ethers.utils.formatBytes32String('ExchangeRates')
+        )
+
+        return new ExchangeRates(this.signer, exchangeRatesAddress)
     }
 
     // Read
