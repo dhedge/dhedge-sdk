@@ -1,6 +1,5 @@
-const { ethers, Contract } = require('ethers')
+const { ethers, Contract, BigNumber } = require('ethers')
 const TOKEN_ABI = require('./abi/token')
-const BN = require('bn.js')
 
 class Token {
     constructor(signer, address) {
@@ -39,9 +38,9 @@ class Token {
         if (!ethers.utils.isAddress(recipient))
             throw new Error('Invalid address format.')
 
-        if (!BN.isBN(amount) && typeof amount !== 'string') {
+        if (!BigNumber.isBigNumber(amount) && typeof amount !== 'string') {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 
@@ -56,9 +55,9 @@ class Token {
         if (!ethers.utils.isAddress(spender))
             throw new Error('Invalid address format.')
 
-        if (!BN.isBN(amount) && typeof amount !== 'string') {
+        if (!BigNumber.isBigNumber(amount) && typeof amount !== 'string') {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 
@@ -76,9 +75,9 @@ class Token {
         )
             throw new Error('Invalid address format.')
 
-        if (!BN.isBN(amount) && typeof amount !== 'string') {
+        if (!BigNumber.isBigNumber(amount) && typeof amount !== 'string') {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 

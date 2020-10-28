@@ -1,9 +1,8 @@
-const { ethers, Contract } = require('ethers')
+const { ethers, Contract, BigNumber } = require('ethers')
 
 const POOL_ABI = require('./abi/pool')
 const TOKEN_ABI = require('./abi/token')
 
-const BN = require('bn.js')
 const Token = require('./token')
 
 class Pool {
@@ -264,9 +263,9 @@ class Pool {
     }
 
     async deposit(amount) {
-        if (!BN.isBN(amount) && typeof amount !== 'string') {
+        if (!BigNumber.isBigNumber(amount) && typeof amount !== 'string') {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 
@@ -278,9 +277,9 @@ class Pool {
     }
 
     async withdraw(amount, forfeit = false) {
-        if (!BN.isBN(amount) && typeof amount !== 'string') {
+        if (!BigNumber.isBigNumber(amount) && typeof amount !== 'string') {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 
@@ -299,9 +298,12 @@ class Pool {
         sourceKey = ethers.utils.formatBytes32String(sourceKey)
         destinationKey = ethers.utils.formatBytes32String(destinationKey)
 
-        if (!BN.isBN(sourceAmount) && typeof sourceAmount !== 'string') {
+        if (
+            !BigNumber.isBigNumber(sourceAmount) &&
+            typeof sourceAmount !== 'string'
+        ) {
             throw new Error(
-                'Please pass numbers as strings or BN objects to avoid precision errors.'
+                'Please pass numbers as strings or BigNumber objects to avoid precision errors.'
             )
         }
 
