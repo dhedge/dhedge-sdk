@@ -1,4 +1,4 @@
-const { Contract, Wallet, ethers } = require('ethers')
+const { Contract, Wallet, BigNumber, ethers } = require('ethers')
 const Pool = require('./pool')
 
 const FACTORY_ABI = require('./abi/factory')
@@ -6,6 +6,10 @@ const ADDRESS_RESOLVER_ABI = require('./abi/address-resolver')
 const ExchangeRates = require('./exchange-rates')
 
 class Factory {
+    /**
+     * @param {Signer} signer
+     * @param {string} factoryAddress
+     */
     constructor(signer, factoryAddress) {
         this.signer = signer
 
@@ -14,6 +18,11 @@ class Factory {
         this.address = factoryAddress
     }
 
+    /**
+     * Initializes a Factory instance based on the .env file.
+     * 
+     * @returns {Factory}
+     */
     static initialize() {
         const config = require('./config')
 
@@ -27,10 +36,20 @@ class Factory {
         return new Factory(signer, config.factoryAddress)
     }
 
+    /**
+     * Returns the address resolver of the factory.
+     * 
+     * @returns {Promise<string>}
+     */
     getAddressResolver() {
         return this.factory.addressResolver()
     }
 
+    /**
+     * Returns an ExchangeRates instance.
+     * 
+     * @returns {Promise<ExchangeRates>}
+     */
     async getExchangeRates() {
         const resolverAddress = await this.getAddressResolver()
 
@@ -49,10 +68,21 @@ class Factory {
 
     // Read
 
+    /**
+     * Returns the address of the factory contract.
+     * 
+     * @returns {string}
+     */
     getAddress() {
         return this.address
     }
 
+    /**
+     * Loads a pool based on the supplied address. Fails if pool doesn't belong to the given factory.
+     * 
+     * @param {string} address
+     * @returns {Promise<Pool>}
+     */
     async loadPool(address) {
         await this.validatePool(address)
 
@@ -61,16 +91,32 @@ class Factory {
         return pool
     }
 
+    /**
+     * Returns if supplied address is a pool.
+     * 
+     * @param {string} address
+     * @returns {Promise<boolean>}
+     */
     async isPool(address) {
         return this.factory.isPool(address)
     }
 
+    /**
+     * @param {string} address
+     * @returns {Promise<void>}
+     */
     async validatePool(address) {
         let isPool = await this.isPool(address)
 
         if (!isPool) throw new Error('Given address not a pool')
     }
 
+    /**
+     * Returns the number of pools in the given factory.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber>}
+     */
     async getPoolCount(raw = false) {
         let result = await this.factory.deployedFundsLength()
 
@@ -79,10 +125,22 @@ class Factory {
         return result.toNumber()
     }
 
+    /**
+     * Returns the DAO address.
+     * 
+     * @returns {Promise<string>}
+     */
     async getDaoAddress() {
         return this.factory.getDaoAddress()
     }
 
+    /**
+     * Returns tha manager fee of the given pool.
+     * 
+     * @param {string} address
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber[]>}
+     */
     async getManagerFee(address, raw = false) {
         await this.validatePool(address)
 
@@ -96,6 +154,12 @@ class Factory {
         return result
     }
 
+    /**
+     * Returns the maximal manager fee in the current factory.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber[]>}
+     */
     async getMaximumManagerFee(raw = false) {
         let result = await this.factory.getMaximumManagerFee()
 
@@ -107,6 +171,12 @@ class Factory {
         return result
     }
 
+    /**
+     * Returns the exit fee.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber[]>}
+     */
     async getExitFee(raw = false) {
         let result = await this.factory.getExitFee()
 
@@ -118,6 +188,12 @@ class Factory {
         return result
     }
 
+    /**
+     * Returns the DAO fee.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber[]>}
+     */
     async getDaoFee(raw = false) {
         let result = await this.factory.getDaoFee()
 
@@ -129,6 +205,12 @@ class Factory {
         return result
     }
 
+    /**
+     * Returns the exit fee cooldown.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber>}
+     */
     async getExitFeeCooldown(raw = false) {
         let result = await this.factory.getExitFeeCooldown()
 
@@ -137,6 +219,12 @@ class Factory {
         return result.toNumber()
     }
 
+    /**
+     * Returns the maximum number of assets that a pool can support.
+     * 
+     * @param {boolean} raw
+     * @returns {Promise<number|BigNumber>}
+     */
     async getMaximumAssetCount(raw = false) {
         let result = await this.factory.getMaximumSupportedAssetCount()
 
@@ -147,6 +235,16 @@ class Factory {
 
     // Write
 
+    /**
+     * Creates a pool.
+     * 
+     * @param {boolean} privatePool
+     * @param {string} managerName
+     * @param {string} poolName
+     * @param {string[]} assets
+     * @param {number|BigNumber} managerFeeNumerator
+     * @returns {Promise<Pool>}
+     */
     async createPool(
         privatePool,
         managerName,
