@@ -1,4 +1,5 @@
 const { Contract, Wallet, BigNumber, ethers } = require('ethers')
+const Provider = require('./provider')
 const Pool = require('./pool')
 
 const FACTORY_ABI = require('./abi/factory')
@@ -26,7 +27,7 @@ class Factory {
     static initialize() {
         const config = require('./config')
 
-        const provider = new ethers.providers.JsonRpcProvider(config.provider)
+        const provider = new Provider(config.provider)
 
         let signer
         if (config.privateKey) {
