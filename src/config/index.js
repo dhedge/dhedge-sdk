@@ -13,4 +13,5 @@ module.exports = {
     accountId: process.env.ACCOUNT_ID || '0',
     provider: process.env.PROVIDER || 'http://localhost:8545',
     factoryAddress: process.env.FACTORY_ADDRESS || '0x0',
+    gasEstimatePadding: parseInt(process.env.GAS_ESTIMATE_PADDING) || 20,
 }
