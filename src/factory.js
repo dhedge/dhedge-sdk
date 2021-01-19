@@ -29,10 +29,16 @@ class Factory {
 
         const provider = new Provider(config.provider)
 
-        const signer = Wallet.fromMnemonic(
-            config.mnemonic,
-            "m/44'/60'/0'/0/" + config.accountId
-        ).connect(provider)
+        let signer
+        if (config.privateKey) {
+            signer = new Wallet(config.privateKey, provider)
+        }
+        else {
+            signer = Wallet.fromMnemonic(
+                config.mnemonic,
+                "m/44'/60'/0'/0/" + config.accountId
+            ).connect(provider)
+        }
 
         return new Factory(signer, config.factoryAddress)
     }

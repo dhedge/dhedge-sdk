@@ -9,6 +9,7 @@ if (!envFound) {
 }
 
 module.exports = {
+    privateKey: process.env.PRIVATE_KEY || '',
     mnemonic: process.env.MNEMONIC || '',
     accountId: process.env.ACCOUNT_ID || '0',
     provider: process.env.PROVIDER || 'http://localhost:8545',
