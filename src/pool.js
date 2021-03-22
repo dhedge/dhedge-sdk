@@ -21,7 +21,7 @@ class Pool {
 
     /**
      * Returns the pool token instance.
-     * 
+     *
      * @returns {Token}
      */
     token() {
@@ -30,7 +30,7 @@ class Pool {
 
     /**
      * Returns the pool address.
-     * 
+     *
      * @returns {string}
      */
     getAddress() {
@@ -41,7 +41,7 @@ class Pool {
 
     /**
      * Returns the pool manager address.
-     * 
+     *
      * @returns {Promise<string>}
      */
     async getManager() {
@@ -50,7 +50,7 @@ class Pool {
 
     /**
      * Returns the pool manager name.
-     * 
+     *
      * @returns {Promise<string>}
      */
     async getManagerName() {
@@ -59,7 +59,7 @@ class Pool {
 
     /**
      * Returns if the supplied address is a pool member.
-     * 
+     *
      * @param {string} address
      * @returns {Promise<boolean>}
      */
@@ -77,7 +77,7 @@ class Pool {
 
     /**
      * Returns the member count.
-     * 
+     *
      * @param raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -93,7 +93,7 @@ class Pool {
 
     /**
      * Transfers the manager role to the supplied address with and changes the manager name.
-     * 
+     *
      * @param {string} address
      * @param {string} name
      * @returns {Promise<void>}
@@ -112,7 +112,7 @@ class Pool {
 
     /**
      * Batch add members.
-     * 
+     *
      * @param {string[]} members
      * @returns {Promise<void>}
      */
@@ -124,7 +124,7 @@ class Pool {
 
     /**
      * Batch remove members.
-     * 
+     *
      * @param {string[]} members
      * @returns {Promise<void>}
      */
@@ -136,7 +136,7 @@ class Pool {
 
     /**
      * Add a member.
-     * 
+     *
      * @param {string} member
      * @returns {Promise<void>}
      */
@@ -146,7 +146,7 @@ class Pool {
 
     /**
      * Remove a member.
-     * 
+     *
      * @param {string} member
      * @returns {Promise<void>}
      */
@@ -158,7 +158,7 @@ class Pool {
 
     /**
      * Returns if a pool is private
-     * 
+     *
      * @returns {Promise<boolean>}
      */
     async isPrivate() {
@@ -167,7 +167,7 @@ class Pool {
 
     /**
      * Returns the address of the pool creator.
-     * 
+     *
      * @returns {Promise<string>}
      */
     async getCreator() {
@@ -190,7 +190,7 @@ class Pool {
 
     /**
      * Returns the factory address.
-     * 
+     *
      * @returns {Promise<string>}
      */
     async getFactory() {
@@ -199,7 +199,7 @@ class Pool {
 
     /**
      * Returns all pool assets.
-     * 
+     *
      * @returns {Promise<string[]>}
      */
     async getAssets() {
@@ -210,7 +210,7 @@ class Pool {
 
     /**
      * Returns the last token price at which the manager fee was minted.
-     * 
+     *
      * @returns {Promise<BigNumber>}
      */
     async getTokenPriceAtLastFeeMint() {
@@ -219,7 +219,7 @@ class Pool {
 
     /**
      * Returns the timestamp of the last deposit of the supplied address.
-     * 
+     *
      * @param {string} address
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
@@ -234,7 +234,7 @@ class Pool {
 
     /**
      * Returns the manager fee.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -251,7 +251,7 @@ class Pool {
 
     /**
      * Returns the exit fee.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -268,7 +268,7 @@ class Pool {
 
     /**
      * Returns the asset count.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -282,7 +282,7 @@ class Pool {
 
     /**
      * Returns true if the asset is supported.
-     * 
+     *
      * @param {string} key
      * @param {boolean} convert
      * @returns {Promise<boolean>}
@@ -295,7 +295,7 @@ class Pool {
 
     /**
      * Returns the Token instance of the supplied asset.
-     * 
+     *
      * @param {string} key
      * @returns {Promise<Token>}
      */
@@ -312,7 +312,7 @@ class Pool {
 
     /**
      * Returns the pool value.
-     * 
+     *
      * @returns {Promise<BigNumber>}
      */
     async getPoolValue() {
@@ -321,7 +321,7 @@ class Pool {
 
     /**
      * Returns the asset value of the given asset.
-     * 
+     *
      * @param {string} key
      * @returns {Promise<BigNumber>}
      */
@@ -336,7 +336,7 @@ class Pool {
 
     /**
      * Returns the fund summary
-     * 
+     *
      * @returns {Promise<{exitFee: number, managerFee: number, private: boolean, managerAddress: string, creationTime: number, totalSupply: BigNumber, name: string, managerName: string, totalPoolValue: BigNumber}>}
      */
     async getSummary() {
@@ -357,7 +357,7 @@ class Pool {
 
     /**
      * Returns the fund composition.
-     * 
+     *
      * @returns {Promise<any>}
      */
     async getComposition() {
@@ -377,7 +377,7 @@ class Pool {
 
     /**
      * Returns waiting periods for all assets.
-     * 
+     *
      * @returns {Promise<Object>}
      */
     async getWaitingPeriods() {
@@ -396,7 +396,7 @@ class Pool {
 
     /**
      * Get a map of suspended assets.
-     * 
+     *
      * @returns {Promise<Object>}
      */
     async getSuspendedAssets() {
@@ -415,7 +415,7 @@ class Pool {
 
     /**
      * Add a supported asset.
-     * 
+     *
      * @param {string} key
      * @returns {Promise<void>}
      */
@@ -426,12 +426,14 @@ class Pool {
             throw new Error('Asset already supported')
         }
 
-        return this.contract.addToSupportedAssets(key)
+        let tx = await this.contract.addToSupportedAssets(key)
+
+        await tx.wait(1)
     }
 
     /**
      * Remove a supported asset.
-     * 
+     *
      * @param {string} key
      * @returns {Promise<void>}
      */
@@ -442,12 +444,14 @@ class Pool {
             throw new Error('Asset not supported')
         }
 
-        return this.contract.removeFromSupportedAssets(key)
+        let tx = await this.contract.removeFromSupportedAssets(key)
+
+        await tx.wait(1)
     }
 
     /**
      * Deposit
-     * 
+     *
      * @param {string|BigNumber} amount
      * @returns {Promise<void>}
      */
@@ -467,7 +471,7 @@ class Pool {
 
     /**
      * Withdraw
-     * 
+     *
      * @param {string|BigNumber} amount
      * @param {boolean} forfeit
      * @returns {Promise<void>}
@@ -492,7 +496,7 @@ class Pool {
 
     /**
      * Exchange
-     * 
+     *
      * @param {string} sourceKey
      * @param {string|BigNumber} sourceAmount
      * @param {string} destinationKey
