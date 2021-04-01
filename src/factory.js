@@ -21,7 +21,7 @@ class Factory {
 
     /**
      * Initializes a Factory instance based on the .env file.
-     * 
+     *
      * @returns {Factory}
      */
     static initialize() {
@@ -32,8 +32,7 @@ class Factory {
         let signer
         if (config.privateKey) {
             signer = new Wallet(config.privateKey, provider)
-        }
-        else {
+        } else {
             signer = Wallet.fromMnemonic(
                 config.mnemonic,
                 "m/44'/60'/0'/0/" + config.accountId
@@ -45,7 +44,7 @@ class Factory {
 
     /**
      * Returns the address resolver of the factory.
-     * 
+     *
      * @returns {Promise<string>}
      */
     getAddressResolver() {
@@ -54,7 +53,7 @@ class Factory {
 
     /**
      * Returns an ExchangeRates instance.
-     * 
+     *
      * @returns {Promise<ExchangeRates>}
      */
     async getExchangeRates() {
@@ -77,7 +76,7 @@ class Factory {
 
     /**
      * Returns the address of the factory contract.
-     * 
+     *
      * @returns {string}
      */
     getAddress() {
@@ -86,7 +85,7 @@ class Factory {
 
     /**
      * Loads a pool based on the supplied address. Fails if pool doesn't belong to the given factory.
-     * 
+     *
      * @param {string} address
      * @returns {Promise<Pool>}
      */
@@ -100,7 +99,7 @@ class Factory {
 
     /**
      * Returns if supplied address is a pool.
-     * 
+     *
      * @param {string} address
      * @returns {Promise<boolean>}
      */
@@ -120,7 +119,7 @@ class Factory {
 
     /**
      * Returns the number of pools in the given factory.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -134,7 +133,7 @@ class Factory {
 
     /**
      * Returns the DAO address.
-     * 
+     *
      * @returns {Promise<string>}
      */
     async getDaoAddress() {
@@ -143,7 +142,7 @@ class Factory {
 
     /**
      * Returns tha manager fee of the given pool.
-     * 
+     *
      * @param {string} address
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber[]>}
@@ -163,7 +162,7 @@ class Factory {
 
     /**
      * Returns the maximal manager fee in the current factory.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber[]>}
      */
@@ -180,7 +179,7 @@ class Factory {
 
     /**
      * Returns the exit fee.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber[]>}
      */
@@ -197,7 +196,7 @@ class Factory {
 
     /**
      * Returns the DAO fee.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber[]>}
      */
@@ -214,7 +213,7 @@ class Factory {
 
     /**
      * Returns the exit fee cooldown.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -228,7 +227,7 @@ class Factory {
 
     /**
      * Returns the maximum number of assets that a pool can support.
-     * 
+     *
      * @param {boolean} raw
      * @returns {Promise<number|BigNumber>}
      */
@@ -244,7 +243,7 @@ class Factory {
 
     /**
      * Creates a pool.
-     * 
+     *
      * @param {boolean} privatePool
      * @param {string} managerName
      * @param {string} poolName
@@ -256,6 +255,7 @@ class Factory {
         privatePool,
         managerName,
         poolName,
+        symbol = 'DHBPT',
         assets = ['sETH'],
         managerFeeNumerator = 100
     ) {
@@ -268,6 +268,7 @@ class Factory {
             this.signer.getAddress(),
             managerName,
             poolName,
+            symbol,
             managerFeeNumerator,
             assets
         )
