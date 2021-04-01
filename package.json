@@ -1,26 +1,26 @@
 {
-  "name": "dhedge-sdk",
-  "version": "0.0.4",
-  "description": "dHedge.org Trading SDK",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "babel -d dist src",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:docs": "jsdoc2md src/*.js > DOCS.md"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@babel/runtime": "^7.3.4",
-    "dotenv": "^8.2.0",
-    "ethers": "^5.0.8"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.3.4",
-    "@babel/plugin-transform-runtime": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
-    "babel-preset-minify": "^0.5.0",
-    "jsdoc-to-markdown": "^6.0.1"
-  }
+    "name": "dhedge-sdk",
+    "version": "0.0.5",
+    "description": "dHedge.org Trading SDK",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "babel -d dist src",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build:docs": "jsdoc2md src/*.js > DOCS.md"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@babel/runtime": "^7.3.4",
+        "dotenv": "^8.2.0",
+        "ethers": "^5.1.0"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.3.4",
+        "@babel/plugin-transform-runtime": "^7.3.4",
+        "@babel/preset-env": "^7.3.4",
+        "babel-preset-minify": "^0.5.0",
+        "jsdoc-to-markdown": "^6.0.1"
+    }
 }
